@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post-Therapy Decision Framework</title>
-    
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; }
         h1 { color: #2c3e50; text-align: center; margin-bottom: 10px; }
@@ -21,8 +20,6 @@
         button:hover { background: #2ecc71; }
         #result-box { display: none; margin-top: 30px; padding: 25px; border-radius: 8px; font-size: 1.1em; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .result-title { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
-        
-        /* Result Colors */
         .stay { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
         .calm { background: #cce5ff; color: #004085; border: 2px solid #b8daff; }
         .immediate { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
@@ -141,33 +138,21 @@
     <script>
         document.getElementById('decisionForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Get Pillar 1 Score
             const p1 = parseInt(document.querySelector('input[name="p1_q1"]:checked').value) +
                        parseInt(document.querySelector('input[name="p1_q2"]:checked').value) +
                        parseInt(document.querySelector('input[name="p1_q3"]:checked').value) +
                        parseInt(document.querySelector('input[name="p1_q4"]:checked').value);
-            
-            // Get Pillar 2 Result (Any YES is a fail)
             const p2 = document.querySelector('input[name="p2_q1"]:checked').value === "Yes" ||
                        document.querySelector('input[name="p2_q2"]:checked').value === "Yes" ||
                        document.querySelector('input[name="p2_q3"]:checked').value === "Yes";
-            
-            // Get Pillar 3 Result (Count A's and B's)
             let aCount = 0;
             if(document.querySelector('input[name="p3_q1"]:checked').value === "A") aCount++;
             if(document.querySelector('input[name="p3_q2"]:checked').value === "A") aCount++;
-            const p3_mostlyA = aCount > 0; // If they picked at least one A, leaning towards action
-            const p3_mostlyB = aCount === 0; // Picked both Bs
-
+            const p3_mostlyA = aCount > 0;
             const resultBox = document.getElementById('result-box');
             const resTitle = document.getElementById('res-title');
             const resDesc = document.getElementById('res-desc');
-
-            // Reset classes
             resultBox.className = '';
-
-            // Logic Tree
             if (p1 >= 16 && !p2 && p3_mostlyA) {
                 resultBox.classList.add('stay');
                 resTitle.innerText = "Path 1: Stay & Grow";
@@ -180,7 +165,7 @@
                 resultBox.classList.add('immediate');
                 resTitle.innerText = "Path 3: The Immediate Exit";
                 resDesc.innerText = "The company is fundamentally toxic or ethically compromised. Therapy gave you the strength to see this. Fix your resume, set a hard target date, and get out to protect your health.";
-            } else if (p1 < 16 && p3_mostlyB) {
+            } else if (p1 < 16 && !p3_mostlyA) {
                 resultBox.classList.add('stepping');
                 resTitle.innerText = "Path 4: The Stepping Stone";
                 resDesc.innerText = "The company isn't great, but you don't have the energy to job hunt yet. Treat this job strictly as a paycheck. Do the bare minimum required, and use their money to fund your ongoing recovery until your energy returns.";
@@ -189,7 +174,6 @@
                 resTitle.innerText = "Mixed Results: Prioritize Rest";
                 resDesc.innerText = "Your answers are mixed, indicating you are still in the recovery phase. Do not make any major decisions yet. Focus strictly on your therapy and keeping your boundaries firm in your current role.";
             }
-
             resultBox.style.display = 'block';
             resultBox.scrollIntoView({ behavior: 'smooth' });
         });
